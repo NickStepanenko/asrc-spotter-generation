@@ -10,9 +10,18 @@ const SpotterSidebar: React.FC<SidebarProps> = (params) => {
   } = params;
 
   return(
-    <div style={styles.spotterSidebar}>
-      <span>{title}</span>
-      <span>Championship entry list</span>
+    <div style={styles.sidebar}>
+      <div style={styles.sidebarLogoBox}>
+        <img
+          src="/img/asrc_wy.png"
+          alt="ASRC"
+          style={styles.sidebarLogo}
+        />
+      </div>
+      <div style={styles.sidebarText}>
+        <span>{title}</span>
+        <span>Championship entry list</span>
+      </div>
     </div>
   );
 };
@@ -23,20 +32,29 @@ type Styles = {
 };
 
 const styles: Styles = {
-  spotterSidebar: {
-    color: '#fff',
+  sidebar: {
     backgroundColor: '#000',
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-between',
+    padding: '1.5rem',
+  },
+  sidebarText: {
+    color: '#fff',
     fontFamily: "'Orbitron', sans-serif",
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'center',
     writingMode: 'vertical-rl',
     transform: 'rotate(180deg)',
-    padding: '2rem',
-    lineHeight: 'normal',
-    fontSize: '24pt',
+    fontSize: '28pt',
+    fontWeight: '800',
   },
-  championshipTitle: {
+  sidebarLogoBox: {
+
+  },
+  sidebarLogo: {
+
   }
 };
 

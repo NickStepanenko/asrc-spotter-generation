@@ -1,4 +1,7 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
+import getDominantColorHexIgnoringWhite from './colorPicker';
+
+import inlineStyles from './CarCard.module.css';
 
 type CarCardProps = {
   carNumber: number;
@@ -9,6 +12,18 @@ type CarCardProps = {
   carImage: string;
   championshipLogo: string;
   flagImage: string;
+};
+
+const defNumberBoxStyles = {
+  display: 'flex',
+  fontWeight: 'bold',
+  backgroundColor: '#000',
+};
+
+type NumberBoxStyle = {
+  display: string;
+  fontWeight: string;
+  backgroundColor: string;
 };
 
 const CarCard: React.FC<CarCardProps> = (params) => {
@@ -23,189 +38,114 @@ const CarCard: React.FC<CarCardProps> = (params) => {
     flagImage,
   } = params;
 
-  return (
-    <div style={styles.card}>
-      <div style={styles.header}>
-        <div style={styles.numberBox}>
-          <span style={styles.number}>{carNumber}</span>
+  const [numberBoxStyles, setNumberBoxStyles] = useState<NumberBoxStyle>(defNumberBoxStyles);
+  
+  const [zoomed, setZoomed] = useState(false);
+  const toggleZoom = () => setZoomed(!zoomed);
+
+  useEffect(() => {
+    (async () => {
+      const backgroundColor = await getDominantColorHexIgnoringWhite(teamLogo);
+      setNumberBoxStyles({
+        display: 'flex',
+        fontWeight: 'bold',
+        backgroundColor: backgroundColor,
+      });
+    })();
+  }, []);
+
+  const cardContent = (
+    <div className={inlineStyles.card} onClick={toggleZoom}>
+      <div className={inlineStyles.header}>
+        <div style={numberBoxStyles}>
+          <span className={inlineStyles.number}>{carNumber}</span>
         </div>
         
-        <div style={styles.driverInfo}>
-          <div style={styles.topImages}>
+        <div className={inlineStyles.driverInfo}>
+          <div className={inlineStyles.topImages}>
             <img
               src="/img/asrc_b.png"
               alt="ASRC"
-              style={styles.logoImg}
+              className={inlineStyles.logoImg}
             />
             <img
               src="/img/advanced_simulation_b.png"
               alt="Advanced Simulation"
-              style={styles.logoImg}
+              className={inlineStyles.logoImg}
             />
             <img
               src="/img/irw_colored_inline.png"
               alt="iVRA Racing Wheels"
-              style={styles.logoImg}
+              className={inlineStyles.logoImg}
             />
           </div>
-          <div style={styles.nameRow}>
+          <div className={inlineStyles.nameRow}>
             <img
               src={flagImage}
-              style={styles.flag}
+              className={inlineStyles.flag}
             />
-            <span style={styles.driverNameShort}>{abbreviateLastName(lastName)}</span>
+            <span className={inlineStyles.driverNameShort}>{abbreviateLastName(lastName)}</span>
           </div>
-          <div style={styles.driverName}>
+          <div className={inlineStyles.driverName}>
             <span>{firstName} {lastName}</span>
           </div>
         </div>
 
-        <div style={styles.championshipLogoBox}>
+        <div className={inlineStyles.championshipLogoBox}>
           <img
             src={championshipLogo}
-            style={styles.logoImage}
+            className={inlineStyles.logoImage}
           />
         </div>
         
-        <div style={styles.teamLogoImageBox}>
+        <div className={inlineStyles.teamLogoImageBox}>
           <img
             src={teamLogo}
-            style={styles.teamLogoImage}
+            className={inlineStyles.teamLogoImage}
           />
         </div>
       </div>
 
-      <div style={styles.carImageBox}>
+      <div className={inlineStyles.carImageBox}>
         <img
           src={carImage}
-          style={styles.carImage}
+          className={inlineStyles.carImage}
         />
       </div>
 
-      <div style={styles.teamName}>{teamName}</div>
+      <div className={inlineStyles.teamName}>{teamName}</div>
     </div>
+  );
+
+  return (
+    <>
+      {zoomed && (
+        <div className={inlineStyles.zoomOverlay} onClick={toggleZoom}>
+          <div className={inlineStyles.zoomedCard}>
+            {cardContent}
+          </div>
+        </div>
+      )}
+
+      {!zoomed && (
+        <div>
+          {cardContent}
+        </div>
+      )}
+    </>
   );
 };
 
 function abbreviateLastName(lastname: string): string {
-  // Remove non-letter characters and convert to uppercase
   const cleanName = lastname.replace(/[^a-zA-Z]/g, '').toUpperCase();
 
   if (cleanName.length >= 3) {
     return cleanName.slice(0, 3);
-  } else {
-    // Pad with last character if too short
-    const padChar = cleanName.charAt(cleanName.length - 1) || 'X'; // Fallback to 'X'
+  }
+  else {
+    const padChar = cleanName.charAt(cleanName.length - 1) || 'X';
     return (cleanName + padChar.repeat(3)).slice(0, 3);
   }
 }
-
-// Define a type for the style object to enable inline styles safely
-type Styles = {
-  [key: string]: React.CSSProperties;
-};
-
-const styles: Styles = {
-  card: {
-    color: '#fff',
-    fontFamily: "'Orbitron', sans-serif",
-    width: '20rem',
-    margin: '0 auto',
-    borderRadius: '.5rem',
-    overflow: 'hidden',
-    border: '.1rem solid #aaaaaaff',
-    lineHeight: 'normal',
-  },
-  header: {
-    display: 'grid',
-    gridTemplate: '3rem / 4rem 12rem 3.5rem',
-    alignItems: 'top',
-    color: '#000',
-    justifyContent: 'space-between',
-    minHeight: '3rem',
-    maxHeight: '3rem',
-  },
-  numberBox: {
-    display: 'flex',
-    backgroundColor: '#007bff',
-    color: '#fff',
-    fontWeight: 'bold',
-  },
-  number: {
-    display: 'flex',
-    fontSize: '24pt',
-    width: '100%',
-    margin: 'auto',
-    justifyContent: 'center',
-  },
-  driverInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-  },
-  nameRow: {
-    display: 'flex',
-    alignItems: 'center',
-    gap: '.25rem',
-  },
-  driverNameShort: {
-    fontSize: '20pt',
-    fontWeight: '600',
-    lineHeight: '.5rem',
-  },
-  driverName: {
-    fontSize: '9pt',
-    fontWeight: 'bold',
-  },
-  flag: {
-    width: '2rem',
-    minHeight: '1.4rem',
-    objectFit: 'cover',
-    border: '.1rem solid #ccc',
-    display: 'block',
-  },
-  topImages: {
-    display: 'flex',
-    gap: '1rem',
-    margin: '.2rem 0',
-  },
-  logoImg: {
-    maxHeight: '.5rem',
-  },
-  championshipLogoBox: {
-    display: 'flex',
-    backgroundColor: 'black',
-  },
-  logoImage: {
-    display: 'flex',
-    height: '.35rem',
-    margin: 'auto',
-  },
-  carImageBox: {
-    textAlign: 'center',
-  },
-  carImage: {
-    width: '95%',
-    margin: '1rem auto 0',
-  },
-  teamLogoImageBox: {
-    display: 'flex',
-    justifyContent: 'center',
-    width: '4rem',
-    margin: '.65rem auto',
-  },
-  teamLogoImage: {
-    height: 'auto',
-    width: '1.85rem',
-  },
-  teamName: {
-    textAlign: 'center',
-    fontSize: '10pt',
-    fontWeight: 'bold',
-    padding: '.5rem 0',
-    backgroundColor: '#000',
-    color: '#fff',
-  },
-};
 
 export default CarCard;

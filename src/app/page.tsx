@@ -1,16 +1,12 @@
 "use client"
 import { useEffect, useState } from "react";
-import { Button, Select, Space } from 'antd';
+import { Button, Select, Space, Empty, message } from 'antd';
 import * as htmlToImage from 'html-to-image';
 import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 
 import CarCard from "./components/CarElement";
 import SpotterSidebar from "./components/SpotterSidebar";
 
-type Championships = {
-  id: number,
-  title: string,
-};
 type Championship = {
   id: number,
   title: string,
@@ -19,7 +15,7 @@ type Championship = {
 };
 type ChampionshipsListItem = {
   value: number,
-  label: string,
+  label: React.ReactElement,
 };
 type Cars = {
   carNumber: number,
@@ -32,17 +28,29 @@ type Cars = {
 };
 
 export default function Home() {
-  const [champData, setChampData] = useState<Championships[]>([]);
+  const [messageApi, contextHolder] = message.useMessage();
+  const error = (msg: string) => {
+    messageApi.open({
+      type: 'error',
+      content: msg,
+    });
+  };
+
+  const [champData, setChampData] = useState<Championship[]>([]);
   const [champList, setChampList] = useState<ChampionshipsListItem[]>([]);
   const [selectedChamp, setSelectedChamp] = useState<Championship | null>(null);
 
   const handleChampionshipSelection = (id: number) => {
     const champ = champData.find((item) => item.id === id) || null;
-    setSelectedChamp(champ); // Type now matches!
+    setSelectedChamp(champ);
   };
 
   const handleSaveToImage = (): void => {
     const node = document.getElementById('spotter-area');
+    if (!node) {
+      error("Element is missing on the page");
+      return;
+    }
 
     htmlToImage
       .toJpeg(node, { quality: 1.00 })
@@ -55,20 +63,20 @@ export default function Home() {
   };
 
   useEffect(() => {
-    fetch('/api/championships')
-      .then((res) => res.json())
-      .then(setChampData)
-      .catch(console.error);
-  }, []);
-
-  useEffect(() => {
-    const items = champData.map((champ: Championships) => ({
+    const items = champData.map((champ: Championship) => ({
       value: champ.id,
       label: (<span>{champ.title}</span>),
     }));
 
     setChampList(items);
   }, [champData]);
+
+  useEffect(() => {
+    fetch('/api/championships')
+      .then((res) => res.json())
+      .then(setChampData)
+      .catch(console.error);
+  }, []);
 
   return (
     <div className="">
@@ -84,6 +92,7 @@ export default function Home() {
               <Button type="primary" onClick={handleSaveToImage}>Save image</Button>
             </Space>
           </div>
+          {(!selectedChamp ? <Empty /> :
           <div style={styles.spotterArea} id="spotter-area">
             <SpotterSidebar
               title={selectedChamp?.title || ""}
@@ -107,6 +116,7 @@ export default function Home() {
 
             </div>
           </div>
+          )}
         </div>
       </main>
       <footer className="">
@@ -136,7 +146,7 @@ const styles: Styles = {
     gridTemplateRows: 'repeat(auto-fill, minmax(10rem, 10rem))',
     gap: '.5rem',
     alignItems: 'start',
-    justifyContent: 'flex-start',
+    justifyContent: 'center',
     margin: '2rem 0',
   },
   spotterArea: {
