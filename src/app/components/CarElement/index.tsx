@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Skeleton } from 'antd';
 import getDominantColorHexIgnoringWhite from './colorPicker';
 
 import inlineStyles from './CarCard.module.css';
@@ -39,6 +40,7 @@ const CarCard: React.FC<CarCardProps> = (params) => {
   } = params;
 
   const [numberBoxStyles, setNumberBoxStyles] = useState<NumberBoxStyle>(defNumberBoxStyles);
+  const [loading, setLoading] = useState(true);
   
   const [zoomed, setZoomed] = useState(false);
   const toggleZoom = () => setZoomed(!zoomed);
@@ -51,69 +53,72 @@ const CarCard: React.FC<CarCardProps> = (params) => {
         fontWeight: 'bold',
         backgroundColor: backgroundColor,
       });
+      setLoading(false);
     })();
   }, []);
 
   const cardContent = (
     <div className={inlineStyles.card} onClick={toggleZoom}>
-      <div className={inlineStyles.header}>
-        <div style={numberBoxStyles}>
-          <span className={inlineStyles.number}>{carNumber}</span>
-        </div>
-        
-        <div className={inlineStyles.driverInfo}>
-          <div className={inlineStyles.topImages}>
+      <Skeleton loading={loading} active>
+        <div className={inlineStyles.header}>
+          <div style={numberBoxStyles}>
+            <span className={inlineStyles.number}>{carNumber}</span>
+          </div>
+          
+          <div className={inlineStyles.driverInfo}>
+            <div className={inlineStyles.topImages}>
+              <img
+                src="/img/asrc_b.png"
+                alt="ASRC"
+                className={inlineStyles.logoImg}
+              />
+              <img
+                src="/img/advanced_simulation_b.png"
+                alt="Advanced Simulation"
+                className={inlineStyles.logoImg}
+              />
+              <img
+                src="/img/irw_colored_inline.png"
+                alt="iVRA Racing Wheels"
+                className={inlineStyles.logoImg}
+              />
+            </div>
+            <div className={inlineStyles.nameRow}>
+              <img
+                src={flagImage}
+                className={inlineStyles.flag}
+              />
+              <span className={inlineStyles.driverNameShort}>{abbreviateLastName(lastName)}</span>
+            </div>
+            <div className={inlineStyles.driverName}>
+              <span>{firstName} {lastName}</span>
+            </div>
+          </div>
+
+          <div className={inlineStyles.championshipLogoBox}>
             <img
-              src="/img/asrc_b.png"
-              alt="ASRC"
-              className={inlineStyles.logoImg}
-            />
-            <img
-              src="/img/advanced_simulation_b.png"
-              alt="Advanced Simulation"
-              className={inlineStyles.logoImg}
-            />
-            <img
-              src="/img/irw_colored_inline.png"
-              alt="iVRA Racing Wheels"
-              className={inlineStyles.logoImg}
+              src={championshipLogo}
+              className={inlineStyles.logoImage}
             />
           </div>
-          <div className={inlineStyles.nameRow}>
+          
+          <div className={inlineStyles.teamLogoImageBox}>
             <img
-              src={flagImage}
-              className={inlineStyles.flag}
+              src={teamLogo}
+              className={inlineStyles.teamLogoImage}
             />
-            <span className={inlineStyles.driverNameShort}>{abbreviateLastName(lastName)}</span>
-          </div>
-          <div className={inlineStyles.driverName}>
-            <span>{firstName} {lastName}</span>
           </div>
         </div>
 
-        <div className={inlineStyles.championshipLogoBox}>
+        <div className={inlineStyles.carImageBox}>
           <img
-            src={championshipLogo}
-            className={inlineStyles.logoImage}
+            src={carImage}
+            className={inlineStyles.carImage}
           />
         </div>
-        
-        <div className={inlineStyles.teamLogoImageBox}>
-          <img
-            src={teamLogo}
-            className={inlineStyles.teamLogoImage}
-          />
-        </div>
-      </div>
 
-      <div className={inlineStyles.carImageBox}>
-        <img
-          src={carImage}
-          className={inlineStyles.carImage}
-        />
-      </div>
-
-      <div className={inlineStyles.teamName}>{teamName}</div>
+        <div className={inlineStyles.teamName}>{teamName}</div>
+      </Skeleton>
     </div>
   );
 

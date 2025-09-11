@@ -6,6 +6,7 @@ import { toPng, toJpeg, toBlob, toPixelData, toSvg } from 'html-to-image';
 
 import CarCard from "./components/CarElement";
 import SpotterSidebar from "./components/SpotterSidebar";
+import TrackSidebar from "./components/TrackSidebar";
 
 type Championship = {
   id: number,
@@ -113,8 +114,10 @@ export default function Home() {
                   />
                 );
               })}
-
             </div>
+            <TrackSidebar
+              title={selectedChamp?.title || ""}
+            />
           </div>
           )}
         </div>
@@ -152,7 +155,6 @@ const styles: Styles = {
   spotterArea: {
     backgroundColor: '#fff',
     display: 'grid',
-    gridTemplate: '1fr / 10rem 90%',
-    gap: '1rem',
+    gridTemplate: '1fr / 5% 70% 25%',
   },
 };

@@ -29,7 +29,7 @@
 }
 
 .zoomedCard {
-  transform: scale(5);
+  transform: scale(4);
   transition: transform 0.3s ease;
   z-index: 10000;
 }

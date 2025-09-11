@@ -9,6 +9,7 @@
     "lint": "eslint"
   },
   "dependencies": {
+    "@ant-design/icons": "^5.6.1",
     "antd": "^5.27.3",
     "html-to-image": "^1.11.13",
     "next": "^15.5.2",
