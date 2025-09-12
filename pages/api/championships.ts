@@ -5,7 +5,10 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     {
       id: 21,
       title: 'ASRC Formula 1 2025',
-      logo: "/img/asrc_f1_2025/logo.png",
+      logo: '/img/asrc_f1_2025/logo.png',
+      serverName: 'ASRC Formula 1 2025',
+      serverPass: 'asrc',
+      leagueJoinQr: '/img/asrc_f1_2025/qr.png',
       cars: [
         {
           "carNumber": 2,
@@ -267,6 +270,41 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
           "teamLogo": "/img/asrc_f1_2025/teams/bt.png",
           "carImage": "/img/asrc_f1_2025/cars/96.png",
           "flagImage": "/img/flags/it.svg"
+        },
+      ],
+      races: [
+        {
+          id: 308,
+          name: 'Japanese Grand Prix',
+          round: 12,
+          laps: 53,
+          mins: 120,
+          tyres: ["C1 Hard", "C2 Medium", "C3 Soft"],
+          trackMap: '/img/tracks/maps/suzuka_gp_f1.avif',
+          trackLogo: '/img/tracks/logos/suzuka.png',
+          raceDateTime: '2025-09-14T19:00:00Z',
+        },
+        {
+          id: 309,
+          name: 'Saudi Arabian Grand Prix',
+          round: 13,
+          laps: 50,
+          mins: 120,
+          tyres: ["C3 Hard", "C4 Medium", "C5 Soft"],
+          trackMap: '/img/tracks/maps/jeddah_gp_f1.avif',
+          trackLogo: '/img/tracks/logos/jeddah.png',
+          raceDateTime: '2025-09-21T19:00:00Z',
+        },
+        {
+          id: 310,
+          name: 'Brazilian Grand Prix',
+          round: 14,
+          laps: 71,
+          mins: 120,
+          tyres: ["C3 Hard", "C4 Medium", "C5 Soft"],
+          trackMap: '/img/tracks/maps/interlagos_gp_f1.avif',
+          trackLogo: '/img/tracks/logos/interlagos.png',
+          raceDateTime: '2025-09-28T19:00:00Z',
         },
       ],
     },

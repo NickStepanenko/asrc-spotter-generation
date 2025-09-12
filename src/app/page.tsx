@@ -9,23 +9,43 @@ import SpotterSidebar from "./components/SpotterSidebar";
 import TrackSidebar from "./components/TrackSidebar";
 
 type Championship = {
-  id: number,
-  title: string,
-  logo: string,
-  cars: [Cars],
+  id: number;
+  title: string;
+  logo: string;
+  serverName: string;
+  serverPass: string;
+  leagueJoinQr: string;
+  cars: [Car];
+  races: [Race];
 };
+type Car = {
+  carNumber: number;
+  firstName: string;
+  lastName: string;
+  teamName: string;
+  teamLogo: string;
+  carImage: string;
+  flagImage: string;
+};
+type Race = {
+  id: number;
+  name: string;
+  round: number;
+  laps: number;
+  mins: number;
+  tyres: [string];
+  trackMap: string;
+  trackLogo: string;
+  raceDateTime: string;
+};
+
 type ChampionshipsListItem = {
-  value: number,
-  label: React.ReactElement,
+  value: number | null;
+  label: React.ReactElement;
 };
-type Cars = {
-  carNumber: number,
-  firstName: string,
-  lastName: string,
-  teamName: string,
-  teamLogo: string,
-  carImage: string,
-  flagImage: string,
+type RacesListItem = {
+  value: number | null;
+  label: React.ReactElement;
 };
 
 export default function Home() {
@@ -41,9 +61,18 @@ export default function Home() {
   const [champList, setChampList] = useState<ChampionshipsListItem[]>([]);
   const [selectedChamp, setSelectedChamp] = useState<Championship | null>(null);
 
+  const [racesData, setRacesData] = useState<Race[]>([]);
+  const [racesList, setRacesList] = useState<RacesListItem[]>([]);
+  const [selectedRace, setSelectedRace] = useState<Race | null>(null);
+
   const handleChampionshipSelection = (id: number) => {
     const champ = champData.find((item) => item.id === id) || null;
     setSelectedChamp(champ);
+    setRacesData(champ?.races || []);
+  };
+  const handleRaceSelection = (id: number) => {
+    const race = racesData.find((item) => item.id === id) || null;
+    setSelectedRace(race);
   };
 
   const handleSaveToImage = (): void => {
@@ -69,8 +98,17 @@ export default function Home() {
       label: (<span>{champ.title}</span>),
     }));
 
-    setChampList(items);
+    setChampList([ { value: -1, label: (<span>Select championship</span>) }, ...items ]);
   }, [champData]);
+
+  useEffect(() => {
+    const items = racesData.map((race: Race) => ({
+      value: race.id,
+      label: (<span>{race.name}</span>),
+    }));
+
+    setRacesList([ { value: -1, label: (<span>Select race</span>) }, ...items ]);
+  }, [racesData]);
 
   useEffect(() => {
     fetch('/api/championships')
@@ -86,10 +124,19 @@ export default function Home() {
           <div style={styles.filterArea}>
             <Space>
               <Select
+                defaultValue={null}
                 placeholder="Select championship"
                 optionFilterProp="label"
                 options={champList}
-                onChange={handleChampionshipSelection} />
+                onChange={handleChampionshipSelection}
+                popupMatchSelectWidth />
+              <Select
+                defaultValue={null}
+                placeholder="Select race"
+                optionFilterProp="label"
+                options={racesList}
+                onChange={handleRaceSelection}
+                popupMatchSelectWidth />
               <Button type="primary" onClick={handleSaveToImage}>Save image</Button>
             </Space>
           </div>
@@ -99,7 +146,7 @@ export default function Home() {
               title={selectedChamp?.title || ""}
             />
             <div style={styles.spotterCars}>
-              {selectedChamp?.cars?.map((car: Cars, idx: number) => {
+              {selectedChamp?.cars?.map((car: Car, idx: number) => {
                 return(
                   <CarCard
                     key={idx}
@@ -116,7 +163,10 @@ export default function Home() {
               })}
             </div>
             <TrackSidebar
-              title={selectedChamp?.title || ""}
+              trackInfo={selectedRace}
+              serverName={selectedChamp.serverName}
+              serverPass={selectedChamp.serverPass}
+              serverJoinQr={selectedChamp.leagueJoinQr}
             />
           </div>
           )}

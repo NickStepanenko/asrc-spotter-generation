@@ -1,75 +1,102 @@
-import React from 'react';
-import { Button, Input } from 'antd';
+import React, { useEffect } from 'react';
+import dayjs from 'dayjs';
+import { Button, Input, Empty } from 'antd';
 import { DoubleRightOutlined } from '@ant-design/icons';
 
+type TrackInfo = {
+  name: string;
+  round: number;
+  laps: number;
+  mins: number;
+  tyres: [string];
+  trackMap: string;
+  trackLogo: string;
+  raceDateTime: string;
+};
+
 type SidebarProps = {
-  title: string;
+  trackInfo: TrackInfo | null;
+  serverName: string;
+  serverPass: string;
+  serverJoinQr: string;
 };
 
 const TrackSidebar: React.FC<SidebarProps> = (params) => {
   const {
-    title,
+    trackInfo,
+    serverName,
+    serverPass,
+    serverJoinQr,
   } = params;
 
+  useEffect(() => {
+    const raceDateTime = dayjs(trackInfo?.raceDateTime);
+    console.log(trackInfo?.raceDateTime);
+  }, []);
+
   return(
-    <div style={styles.trackSidebar}>
-      <div style={styles.comingRace}>
-        <span>Coming race</span>
-        <DoubleRightOutlined
-          style={styles.comingRaceIcon}
-        />
-      </div>
-      <span style={styles.raceName}>Round 12 - Japanese Grand Prix</span>
-      <div style={styles.trackImageBox}>
-        <img
-          src={"/img/tracks/logos/suzuka_gp_f1.png"}
-          style={styles.trackLogo}
-        />
-        <img
-          src={"/img/tracks/maps/suzuka_gp_f1.avif"}
-          style={styles.trackImage}
-        />
-      </div>
-      <div style={styles.raceDescription}>
-        <div style={styles.descBox}>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Date:</span>
-            <span>14 Sep 2025</span>
+    <>
+      {!trackInfo ? <Empty /> :
+      <div style={styles.trackSidebar}>
+        <div style={styles.comingRace}>
+          <span>Coming race</span>
+          <DoubleRightOutlined
+            style={styles.comingRaceIcon}
+          />
+        </div>
+        <span style={styles.raceName}>Round {trackInfo.round} - {trackInfo.name}</span>
+        <div style={styles.trackImageBox}>
+          <img
+            src={trackInfo.trackLogo}
+            style={styles.trackLogo}
+          />
+          <img
+            src={trackInfo.trackMap}
+            style={styles.trackImage}
+          />
+        </div>
+        <div style={styles.raceDescription}>
+          <div style={styles.descBox}>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Date:</span>
+              <span>14 Sep 2025</span>
+            </div>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Event Start:</span>
+              <span>21:00 CEST</span>
+            </div>
           </div>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Event Start:</span>
-            <span>21:00 CEST</span>
+          <div style={styles.descBox}>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Race Length:</span>
+              <span>{trackInfo.laps} laps or {trackInfo.mins} mins</span>
+            </div>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Tyres:</span>
+              <span>C1-C2-C3</span>
+            </div>
+          </div>
+          <div style={styles.descBox}>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Server Name:</span>
+              <span>{serverName}</span>
+            </div>
+            <div style={styles.descPair}>
+              <span style={styles.descHeader}>Password:</span>
+              <span>{serverPass}</span>
+            </div>
           </div>
         </div>
-        <div style={styles.descBox}>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Race Length:</span>
-            <span>53 laps or 2 hours</span>
-          </div>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Tyres:</span>
-            <span>C1-C2-C3</span>
-          </div>
-        </div>
-        <div style={styles.descBox}>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Server Name:</span>
-            <span>ASRC Formula 1 2025</span>
-          </div>
-          <div style={styles.descPair}>
-            <span style={styles.descHeader}>Password:</span>
-            <span>asrc</span>
-          </div>
+        <div style={styles.qrCodeArea}>
+          <span>Join our Discord community!</span>
+          <img
+            src={serverJoinQr}
+            style={styles.qrCode}
+          />
         </div>
       </div>
-      <div style={styles.qrCodeArea}>
-        <span>Join our Discord community!</span>
-        <img
-          src="/img/qr.png"
-          style={styles.qrCode}
-        />
-      </div>
-    </div>
+      }
+    </>
   );
 };
 
@@ -102,25 +129,18 @@ const styles: Styles = {
     fontSize: '18pt',
   },
   trackImageBox: {
-    position: 'relative',
-    width: '100%',
-    height: '20rem',
     display: 'flex',
+    flexDirection: 'column',
     justifyContent: 'center',
     alignItems: 'center',
     overflow: 'hidden',
+    gap: '2rem',
   },
   trackLogo: {
-    position: 'absolute',
-    top: 0,
-    right: 0,
-    width: '5rem',
-    height: '5rem',
-    objectFit: 'contain',
-    zIndex: 10,
+    width: '8rem',
   },
   trackImage: {
-    maxWidth: '100%',
+    maxWidth: '80%',
     maxHeight: '100%',
     objectFit: 'contain',
   },
