@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Skeleton } from 'antd';
 import getDominantColorHexIgnoringWhite from './colorPicker';
 
-import inlineStyles from './CarCard.module.css';
+import inlineStyles from './CarElement.module.css';
 
 type CarCardProps = {
   carNumber: number;
