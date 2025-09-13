@@ -118,8 +118,8 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="">
-      <main className="">
+    <div>
+      <main>
         <div style={styles.mainArea}>
           <div style={styles.filterArea}>
             <Space>
@@ -129,14 +129,16 @@ export default function Home() {
                 optionFilterProp="label"
                 options={champList}
                 onChange={handleChampionshipSelection}
-                popupMatchSelectWidth />
+                popupMatchSelectWidth
+                style={{ width: 300 }} />
               <Select
                 defaultValue={null}
                 placeholder="Select race"
                 optionFilterProp="label"
                 options={racesList}
                 onChange={handleRaceSelection}
-                popupMatchSelectWidth />
+                popupMatchSelectWidth
+                style={{ width: 300 }} />
               <Button type="primary" onClick={handleSaveToImage}>Save image</Button>
             </Space>
           </div>
